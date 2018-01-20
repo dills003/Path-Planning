@@ -1,5 +1,21 @@
 # CarND-Path-Planning-Project
 Self-Driving Car Engineer Nanodegree Program
+
+### Reflection on how to generate paths
+For path generation I used the spline method discussed in the ‘Walkthrough’ video. We use a spline because it guaranteed to go through all of our points, this helps with smoothing out the path in the simulator. To create the path we do the following:
+1.	Create a spline:
+•	To create a spline we must provide some points for spline.h to draw through. The first two points at the start of the spline are given to make sure the spline path starts in a way that is tangent to the car, so transitions are smooth. These points are either the last two points the car drove through or we take where the car is and then create a point behind that.
+•	I then use five extra points taken from waypoints that are in the lane that I want to be in. These points are 30, 50, 75, 100, and 125 meters ahead of where my car currently is. I settled on these, because at the speed limit, changing one lane did not violate any of the jerk restrictions and it looked like a natural lane change. I also only allow one lane change at a time.
+•	The spline is then created using these seven points
+2.	Create the next_x_vals and next_y_vals to pass to the simulator:
+•	We take all of the previous x and y values that were not used and fill up the front of the vals vectors. This also helps smooth things out. The spacing of these points affects speed.
+•	We then fill the rest of the vals vectors with points along the spline.
+•	If no previous points are given all of the points are on the spline
+3.	Repeat steps 1 and 2 over and over.
+
+In addition to the spline stuff, I created a couple simple cost functions to determine the optimal lane to be in. I look at the lowest speed of all the cars in each lane 75 meters ahead of me. The slowest car in each lane is then subtracted from the speed limit. The slower the car the more the lane is punished. I also look at where the closest car is in each lane. If a car’s s value is closer to mine, it incurs a greater cost. I add these two costs together and pick the lowest lane value.
+ 
+
    
 ### Simulator.
 You can download the Term3 Simulator which contains the Path Planning Project from the [releases tab (https://github.com/udacity/self-driving-car-sim/releases).
